@@ -1,0 +1,9 @@
+(library
+ (name arith)
+ (modules core support syntax lexer parser))
+(env
+  (dev
+    (flags (:standard -warn-error -A))))
+
+(ocamllex lexer)
+(ocamlyacc parser)
