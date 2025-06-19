@@ -10,11 +10,6 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    testImplementation(kotlin("test"))
-    implementation(files(tasks.compileJavacc.get().outputDirectory))
-}
-
 tasks.test {
     useJUnitPlatform()
 }
@@ -25,13 +20,12 @@ kotlin {
 
 project.tasks["compileKotlin"].dependsOn("compileJavacc")
 
-kotlin {
-    tasks {
-        compileJavacc {
-            outputDirectory = project.layout.buildDirectory.dir("generated/javacc/main/java/arith/parser").get().asFile
-        }
+tasks {
+    compileJavacc {
+        outputDirectory = project.layout.buildDirectory.dir("generated/javacc/main/java/arith/parser").get().asFile
     }
-    sourceSets.main {
-        kotlin.srcDir(project.layout.buildDirectory.dir("generated/javacc/main/java").get().asFile)
-    }
+}
+
+sourceSets.main {
+    kotlin.srcDir(project.layout.buildDirectory.dir("generated/javacc/main/java").get().asFile)
 }
