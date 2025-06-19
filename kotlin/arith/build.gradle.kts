@@ -1,5 +1,4 @@
 plugins {
-    java
     kotlin("jvm") version "2.1.20"
     id("org.javacc.javacc") version "4.0.1"
 }
@@ -10,6 +9,12 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
 }
+
+dependencies {
+    testImplementation(kotlin("test"))
+    implementation(files(tasks.compileJavacc.get().outputDirectory))
+}
+
 tasks.test {
     useJUnitPlatform()
 }
@@ -18,15 +23,15 @@ kotlin {
     jvmToolchain(23)
 }
 
-dependencies {
-    testImplementation(kotlin("test"))
-    implementation(files(tasks.compileJavacc.get().outputDirectory))
-}
+project.tasks["compileKotlin"].dependsOn("compileJavacc")
 
-sourceSets {
-    main {
-        java {
-            srcDirs.add(tasks.compileJavacc.get().outputDirectory)
+kotlin {
+    tasks {
+        compileJavacc {
+            outputDirectory = project.layout.buildDirectory.dir("generated/javacc/main/java/arith/parser").get().asFile
         }
+    }
+    sourceSets.main {
+        kotlin.srcDir(project.layout.buildDirectory.dir("generated/javacc/main/java").get().asFile)
     }
 }
