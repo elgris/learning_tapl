@@ -1,0 +1,68 @@
+options {
+  LOOKAHEAD = 1;
+  CHOICE_AMBIGUITY_CHECK = 2;
+  OTHER_AMBIGUITY_CHECK = 1;
+  STATIC = true;
+  DEBUG_PARSER = false;
+  DEBUG_LOOKAHEAD = false;
+  DEBUG_TOKEN_MANAGER = false;
+  ERROR_REPORTING = true;
+  JAVA_UNICODE_ESCAPE = false;
+  UNICODE_INPUT = false;
+  IGNORE_CASE = false;
+  USER_TOKEN_MANAGER = false;
+  USER_CHAR_STREAM = false;
+  BUILD_PARSER = true;
+  BUILD_TOKEN_MANAGER = true;
+  SANITY_CHECK = true;
+  FORCE_LA_CHECK = false;
+}
+
+PARSER_BEGIN(Parser)
+
+package arith.parser;
+
+import arith.ast.False;
+import arith.ast.If;
+import arith.ast.IsZero;
+import arith.ast.Pred;
+import arith.ast.Succ;
+import arith.ast.Term;
+import arith.ast.True;
+import arith.ast.Zero;
+
+/**
+ * Simple brace matcher.
+ */
+public class Parser {
+}
+
+PARSER_END(Parser)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+/** Root production. */
+Term Parse() :
+{ Term t; }
+{
+   t = term() <EOF>
+   { return t; }
+}
+
+Term term() :
+{  }
+{
+      <TRUE: "true"> { return True.INSTANCE; }
+    | <FALSE: "false"> { return False.INSTANCE; }
+    | <ZERO: "0"> { return Zero.INSTANCE; }
+    | { Term cond, thenBranch, elseBranch;  } "if" cond = term() "then" thenBranch = term() "else" elseBranch = term() { return new If(cond, thenBranch, elseBranch); }
+    | { Term t; } "succ" t = term() { return new Succ(t); }
+    | { Term t; } "pred" t = term() { return new Pred(t); }
+    | { Term t; } "iszero" t = term() { return new IsZero(t); }
+}
