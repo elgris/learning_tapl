@@ -35,6 +35,10 @@ import arith.ast.Zero;
  * Simple brace matcher.
  */
 public class Parser {
+  public static Term parse(java.io.InputStream stream) throws ParseException {
+    Parser parser = new Parser(stream);
+    return parser.Parse();
+  }
 }
 
 PARSER_END(Parser)
@@ -45,6 +49,7 @@ SKIP :
 | "\t"
 | "\n"
 | "\r"
+| ";"
 }
 
 /** Root production. */
